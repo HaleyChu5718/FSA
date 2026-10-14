@@ -51,7 +51,7 @@ simulate_subject <- function(
     # no-response
     p_nr           = 0.05,
     # SOA timing jitter: actual_SOA = intended_SOA + Normal(jitter_mean, jitter_sd)
-    # TODO: fill in from real data (run: df$actual_SOA - df$intended_SOA per subject)
+    # TODO: fill in from real data (run: df$actual_SOA - df$intended_SOA per subject) ##sample directly from empirical distribution rather than forcing it to be a normal distribution
     jitter_mean    = NA,   # mean timing error (seconds) — e.g. small positive bias from refresh rounding
     jitter_sd      = NA    # SD of timing error (seconds)
 ) {
@@ -105,7 +105,7 @@ simulate_subject <- function(
       beta_sequential * prev_BRV
 
     eta   <- baseline_logodds + rhythm_component + trial_effects
-    p_cor <- logistic(eta)
+    p_cor <- logistic(eta) #separate model to account for stimulus-level effects that cannot be reduced to accuracy, it doesn't just affect whether you are accurate or not (same/different, previous trial response)
 
     response      <- ifelse(runif(1) < p_cor, 1, -1)
     BRV_accuracy[t] <- ifelse(runif(1) < p_nr, NA, response)
@@ -147,7 +147,7 @@ simulate_fsa <- function(
     # baseline: per-subject accuracy drawn from Beta(alpha_acc, beta_acc)
     # fitted from 8 real FSA subjects (mean=0.745, SD=0.062); update via fsa_fit_beta_accuracy.R
     alpha_acc      = 37.4,
-    beta_acc       = 12.8,
+    beta_acc       = 12.8, #set 50% limit
     # trial-level effect SDs
     sd_fatigue     = 0,
     sd_side        = 0,
